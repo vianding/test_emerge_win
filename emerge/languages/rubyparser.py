@@ -9,7 +9,7 @@ from typing import Dict
 from enum import Enum, unique
 
 import logging
-from pathlib import PosixPath
+from pathlib import WindowsPath
 import os
 
 import pyparsing as pp
@@ -79,7 +79,7 @@ class RubyParser(AbstractParser, ParsingMixin):
         scanned_tokens = self.preprocess_file_content_and_generate_token_list(file_content)
 
         # make sure to create unique names by using the relative analysis path as a base for the result
-        parent_analysis_source_path = f"{PosixPath(analysis.source_directory).parent}/"
+        parent_analysis_source_path = f"{WindowsPath(analysis.source_directory).parent}/"
         relative_file_path_to_analysis = full_file_path.replace(parent_analysis_source_path, "")
 
         file_result = FileResult.create_file_result(
@@ -162,29 +162,29 @@ class RubyParser(AbstractParser, ParsingMixin):
 
         successfully_resolved_dependency = False
 
-        # resolve in pure POSIX way
+        # resolve in pure WINDOWS way
         resolved_posix_dependency = self.resolve_relative_dependency_path(dependency, result.absolute_dir_path, analysis.source_directory)
         if '.rb' not in resolved_posix_dependency:
             resolved_posix_dependency = f"{resolved_posix_dependency}.rb"
 
-        check_dependency_path = f"{PosixPath(analysis.source_directory).parent}/{resolved_posix_dependency}"
+        check_dependency_path = f"{WindowsPath(analysis.source_directory).parent}/{resolved_posix_dependency}"
         if os.path.exists(check_dependency_path):
             dependency = resolved_posix_dependency
             successfully_resolved_dependency = True
 
         if not successfully_resolved_dependency:
-            # otherwise try to resolve it as a non-POSIX dependency, i.e. where "../" imports from the current directory "./"
+            # otherwise try to resolve it as a non-WINDOWS dependency, i.e. where "../" imports from the current directory "./"
             non_posix_dependency = ""
             resolved_non_posix_dependency = ""
 
             # resolve/check by reducing only the first ".." to "."
-            if CoreParsingKeyword.POSIX_PARENT_DIRECTORY.value in dependency:
-                non_posix_dependency = dependency.replace(CoreParsingKeyword.POSIX_PARENT_DIRECTORY.value, CoreParsingKeyword.POSIX_CURRENT_DIRECTORY.value, 1)
+            if CoreParsingKeyword.WINDOWS_PARENT_DIRECTORY.value in dependency:
+                non_posix_dependency = dependency.replace(CoreParsingKeyword.WINDOWS_PARENT_DIRECTORY.value, CoreParsingKeyword.WINDOWS_CURRENT_DIRECTORY.value, 1)
                 resolved_non_posix_dependency = self.resolve_relative_dependency_path(non_posix_dependency, result.absolute_dir_path, analysis.source_directory)
                 if '.rb' not in resolved_non_posix_dependency:
                     resolved_non_posix_dependency = f"{resolved_non_posix_dependency}.rb"
 
-                check_dependency_path = f"{PosixPath(analysis.source_directory).parent}/{resolved_non_posix_dependency}"
+                check_dependency_path = f"{WindowsPath(analysis.source_directory).parent}/{resolved_non_posix_dependency}"
                 if os.path.exists(check_dependency_path):
                     dependency = resolved_non_posix_dependency
                     successfully_resolved_dependency = True
@@ -193,8 +193,8 @@ class RubyParser(AbstractParser, ParsingMixin):
         if not successfully_resolved_dependency:
 
             resolved_lib_dependency = self.resolve_relative_dependency_path(f"lib/{dependency}.rb", analysis.source_directory, analysis.source_directory)
-            # f"{PosixPath(analysis.source_directory)}/lib/{dependency}.rb"
-            check_resolved_lib_dependency_path = f"{PosixPath(analysis.source_directory).parent}/{resolved_lib_dependency}"
+            # f"{WindowsPath(analysis.source_directory)}/lib/{dependency}.rb"
+            check_resolved_lib_dependency_path = f"{WindowsPath(analysis.source_directory).parent}/{resolved_lib_dependency}"
 
             if os.path.exists(check_resolved_lib_dependency_path):
                 dependency = resolved_lib_dependency

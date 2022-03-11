@@ -9,7 +9,7 @@ from typing import Dict
 from enum import Enum, unique
 
 import logging
-from pathlib import PosixPath
+from pathlib import WindowsPath
 import os
 
 import coloredlogs
@@ -84,7 +84,7 @@ class PythonParser(AbstractParser, ParsingMixin):
         scanned_tokens = self.preprocess_file_content_and_generate_token_list_by_mapping(file_content, self._token_mappings)
 
         # make sure to create unique names by using the relative analysis path as a base for the result
-        parent_analysis_source_path = f"{PosixPath(analysis.source_directory).parent}/"
+        parent_analysis_source_path = f"{WindowsPath(analysis.source_directory).parent}/"
         relative_file_path_to_analysis = full_file_path.replace(parent_analysis_source_path, "")
 
         file_result = FileResult.create_file_result(
@@ -202,7 +202,7 @@ class PythonParser(AbstractParser, ParsingMixin):
             # case: 'from .. import dependency1, ..., dependencyN
             if multiple_imports_from_relative_parent_dir and not multiple_imports_from_relative_current_dir:
                 for dep in multiple_dependencies:
-                    resolved_dep = dep.replace(PythonParsingKeyword.PYTHON_IMPORT_PARENT_DIR.value, CoreParsingKeyword.POSIX_PARENT_DIRECTORY.value)
+                    resolved_dep = dep.replace(PythonParsingKeyword.PYTHON_IMPORT_PARENT_DIR.value, CoreParsingKeyword.WINDOWS_PARENT_DIRECTORY.value)
 
                     if f'{PythonParsingKeyword.PY_FILE_EXTENSION.value}' not in resolved_dep:
                         resolved_dep = f'{resolved_dep}{PythonParsingKeyword.PY_FILE_EXTENSION.value}'
@@ -229,23 +229,23 @@ class PythonParser(AbstractParser, ParsingMixin):
             elif not multiple_imports_from_relative_current_dir and not multiple_imports_from_relative_parent_dir:
                 if PythonParsingKeyword.PYTHON_IMPORT_PARENT_DIR.value in dependency:
                     relative_import = True
-                    dependency = dependency.replace(PythonParsingKeyword.PYTHON_IMPORT_PARENT_DIR.value, CoreParsingKeyword.POSIX_PARENT_DIRECTORY.value)
+                    dependency = dependency.replace(PythonParsingKeyword.PYTHON_IMPORT_PARENT_DIR.value, CoreParsingKeyword.WINDOWS_PARENT_DIRECTORY.value)
 
                 if len(dependency) > 1 and CoreParsingKeyword.DOT.value == dependency[0] and CoreParsingKeyword.DOT.value is not dependency[1]:
                     relative_import = True
                     dependency = dependency[1:]
 
-                if not global_import and relative_import and CoreParsingKeyword.POSIX_PARENT_DIRECTORY.value not in dependency:
+                if not global_import and relative_import and CoreParsingKeyword.WINDOWS_PARENT_DIRECTORY.value not in dependency:
                     dependency = self.create_relative_analysis_path_for_dependency(dependency, result.relative_analysis_path)
-                elif not global_import and CoreParsingKeyword.POSIX_PARENT_DIRECTORY.value not in dependency:
+                elif not global_import and CoreParsingKeyword.WINDOWS_PARENT_DIRECTORY.value not in dependency:
                     posix_dependency = dependency.replace(CoreParsingKeyword.DOT.value, CoreParsingKeyword.SLASH.value)
 
                     if analysis.source_directory == CoreParsingKeyword.DOT.value:
                         relative_path = posix_dependency
                     else:
-                        relative_path = f'{PosixPath(analysis.source_directory).name}/{posix_dependency}'
+                        relative_path = f'{WindowsPath(analysis.source_directory).name}/{posix_dependency}'
 
-                    check_dependency_path = f"{ PosixPath(analysis.source_directory).parent}/{relative_path}"
+                    check_dependency_path = f"{ WindowsPath(analysis.source_directory).parent}/{relative_path}"
                     if os.path.exists(f'{check_dependency_path}{PythonParsingKeyword.PY_FILE_EXTENSION.value}'):
                         dependency = f'{relative_path}{PythonParsingKeyword.PY_FILE_EXTENSION.value}'
                     else:
@@ -258,7 +258,7 @@ class PythonParser(AbstractParser, ParsingMixin):
                         LOGGER.debug(f'adding import: {dependency}')
                     continue
 
-                if CoreParsingKeyword.POSIX_PARENT_DIRECTORY.value in dependency:  # contains at least one relative parent element '../'
+                if CoreParsingKeyword.WINDOWS_PARENT_DIRECTORY.value in dependency:  # contains at least one relative parent element '../'
                     dependency = self.resolve_relative_dependency_path(dependency, result.absolute_dir_path, analysis.source_directory)
 
                 if not global_import:

@@ -16,7 +16,7 @@ numpy
 prettytable==0.7.2
 py
 pycodestyle==2.6.0
-pygraphviz==1.6
+pygraphviz==1.7
 pylint
 pyparsing==2.4.7
 python-louvain==0.15

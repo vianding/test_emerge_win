@@ -24,8 +24,8 @@ class ParsingMixinTestCase(unittest.TestCase):
     def setUp(self):
         self.analysis = Analysis()
         self.analysis.analysis_name = "test"
-        self.analysis.source_directory = "/path/to/source"
-        self.result_relative_analysis_path = "source/dir1"
+        self.analysis.source_directory = r"E:\path\to\source"
+        self.result_relative_analysis_path = r"source\dir1"
 
     def tearDown(self):
         pass
@@ -33,8 +33,8 @@ class ParsingMixinTestCase(unittest.TestCase):
     def test_create_relative_analysis_path_from_filepath(self):
         """Test creating a relative analysis path from a fill file path."""
 
-        full_file_path = f'{self.analysis.source_directory}/dir1/file.js'
-        expected_relative_analysis_path = "source/dir1/file.js"
+        full_file_path = f'{self.analysis.source_directory}\\dir1\\file.js'
+        expected_relative_analysis_path = r"source\dir1\file.js"
         relative_analysis_path = ParsingMixin.create_relative_analysis_file_path(self.analysis.source_directory, full_file_path)
         self.assertTrue(relative_analysis_path == expected_relative_analysis_path)
 
@@ -42,7 +42,7 @@ class ParsingMixinTestCase(unittest.TestCase):
         """Test creating a relative analysis path for a dependency name."""
 
         dependency = 'file1.js'
-        expected_relative_analysis_dependency_path = f"{self.result_relative_analysis_path}/{dependency}"
+        expected_relative_analysis_dependency_path = f"{self.result_relative_analysis_path}\\{dependency}"
         relative_analysis_dependency_path = ParsingMixin.create_relative_analysis_path_for_dependency(dependency, self.result_relative_analysis_path)
         self.assertTrue(relative_analysis_dependency_path == expected_relative_analysis_dependency_path)
 
@@ -50,13 +50,13 @@ class ParsingMixinTestCase(unittest.TestCase):
         """Test resolving a relative analysis path of a dependency."""
 
         file_name = "file1.js"
-        full_file_path = "source/dir1/file.js"
+        full_file_path = r"source\dir1\file.js"
 
-        dependency1_before_resolve = '../dir2/dependency1.js'
-        expected_resolved_dependency1_path = 'source/dir2/dependency1.js'
+        dependency1_before_resolve = r'..\dir2\dependency1.js'
+        expected_resolved_dependency1_path = r'source\dir2\dependency1.js'
 
-        dependency2_before_resolve = '../dependency2.js'
-        expected_resolved_dependency2_path = 'source/dependency2.js'
+        dependency2_before_resolve = r'..\dependency2.js'
+        expected_resolved_dependency2_path = r'source\dependency2.js'
 
         relative_file_path_to_analysis = ParsingMixin.create_relative_analysis_file_path(self.analysis.source_directory, full_file_path)
 

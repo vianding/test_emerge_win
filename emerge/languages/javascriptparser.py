@@ -8,7 +8,7 @@ Contains the implementation of the JavaScript language parser and a relevant key
 from typing import Dict
 from enum import Enum, unique
 import logging
-from pathlib import PosixPath
+from pathlib import WindowsPath
 import os
 
 import pyparsing as pp
@@ -187,24 +187,24 @@ class JavaScriptParser(AbstractParser, ParsingMixin):
         elif dependency == CoreParsingKeyword.DOT.value:
             index_dependency = dependency.replace(CoreParsingKeyword.DOT.value, './index.js')
             index_dependency = self.resolve_relative_dependency_path(index_dependency, result.absolute_dir_path, analysis.source_directory)
-            check_dependency_path = f"{ PosixPath(analysis.source_directory).parent}/{index_dependency}"
+            check_dependency_path = f"{ WindowsPath(analysis.source_directory).parent}/{index_dependency}"
             if os.path.exists(check_dependency_path):  # check if the resolved index_dependency exists, then modify
                 dependency = f"{index_dependency}"
 
-        elif dependency.count(CoreParsingKeyword.POSIX_CURRENT_DIRECTORY.value) == 1 and JavaScriptParsingKeyword.PARENT_DIRECTORY.value not in dependency:  # e.g. ./foo
-            dependency = dependency.replace(CoreParsingKeyword.POSIX_CURRENT_DIRECTORY.value, '')
+        elif dependency.count(CoreParsingKeyword.WINDOWS_CURRENT_DIRECTORY.value) == 1 and JavaScriptParsingKeyword.PARENT_DIRECTORY.value not in dependency:  # e.g. ./foo
+            dependency = dependency.replace(CoreParsingKeyword.WINDOWS_CURRENT_DIRECTORY.value, '')
             dependency = self.create_relative_analysis_path_for_dependency(dependency, result.relative_analysis_path)  # adjust dependency to have a relative analysis path
 
         elif JavaScriptParsingKeyword.PARENT_DIRECTORY.value in dependency:  # contains at least one relative parent element '../
             dependency = self.resolve_relative_dependency_path(dependency, result.absolute_dir_path, analysis.source_directory)
 
         # check and verify if we need to add a remaining .js suffix
-        check_dependency_path = f"{ PosixPath(analysis.source_directory).parent}/{dependency}.js"
-        if PosixPath(dependency).suffix != ".js" and os.path.exists(check_dependency_path):
+        check_dependency_path = f"{ WindowsPath(analysis.source_directory).parent}/{dependency}.js"
+        if WindowsPath(dependency).suffix != ".js" and os.path.exists(check_dependency_path):
             dependency = f"{dependency}.js"
 
         # check if the dependency maybe results from an index.js import
-        check_dependency_path_for_index_file = f"{ PosixPath(analysis.source_directory).parent}/{dependency}/index.js"
+        check_dependency_path_for_index_file = f"{ WindowsPath(analysis.source_directory).parent}/{dependency}/index.js"
         if os.path.exists(check_dependency_path_for_index_file):
             dependency = f"{dependency}/index.js"
 

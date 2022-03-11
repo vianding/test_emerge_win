@@ -33,13 +33,13 @@ C_TEST_FILES = {"dhcpserver.c": """
 
 #include <stdio.h>
 #include <string.h>
-#include "py/mperrno.h"
-#include "py/mphal.h"
+#include "py\\mperrno.h"
+#include "py\\mphal.h"
 
 #if MICROPY_PY_LWIP
 
-#include "lib/netutils/dhcpserver.h"
-#include "lwip/udp.h"
+#include "lib\\netutils\\dhcpserver.h"
+#include "lwip\\udp.h"
 
 #define DHCPDISCOVER    (1)
 #define DHCPOFFER       (2)

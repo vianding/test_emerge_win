@@ -1,0 +1,41 @@
+steps to solve issues with installing on windows 
+
+1. install graphviz and pygraphviz manually
+	Step 1: Download and install Graphviz
+
+	https://graphviz.gitlab.io/_pages/Download/Download_windows.html
+
+	Step 2: Add below path to your PATH environment variable
+
+	C:\Program Files (x86)\Graphviz2.38\bin
+
+	Step 3: Re-open command line and activate venv
+
+	venv\Scripts\activate
+
+	Step 4: Download binaries for pygraphviz and install in active venv
+
+	https://github.com/CristiFati/Prebuilt-Binaries/tree/master/PyGraphviz/v1.5/Graphviz-2.42.2
+
+	For example:
+
+	In case of python 3.8
+
+	pip install pygraphviz-1.5-cp38-cp38-win_amd64.whl
+
+	src: https://github.com/pygraphviz/pygraphviz/issues/163
+	
+2. install MSVC C++ build tools 
+    src: https://docs.microsoft.com/en-us/answers/questions/419525/microsoft-visual-c-140-or-greater-is-required.html
+	requires reboot
+
+3. pip instal emerge-viz still doesn't work, not sure if it's because pygraphviz-1.7 is installed
+	(while the requirements.txt specifies 1.6)
+	The fix is that i download the source code, modified the requirements.txt to use pygraphviz 1.7,
+	then running pip install emerge-viz succeeds
+	
+4. still encountering test run error. issue caused by the use of PosixPath in original lib.
+   fix: replace all PosixPath with WindowsPath
+   src: https://stackoverflow.com/questions/57286486/i-cant-load-my-model-because-i-cant-put-a-posixpath
+   
+   ... also need to replace'/' with '\'

@@ -26,7 +26,7 @@ class JavaScriptParserTestCase(unittest.TestCase):
         self.parser = JavaScriptParser()
         self.analysis = Analysis()
         self.analysis.analysis_name = "test"
-        self.analysis.source_directory = "/tests"
+        self.analysis.source_directory = r"\tests"
 
     def tearDown(self):
         pass
@@ -36,7 +36,7 @@ class JavaScriptParserTestCase(unittest.TestCase):
         self.assertFalse(self.parser.results)
 
         for file_name, file_content in self.example_data.items():
-            self.parser.generate_file_result_from_analysis(self.analysis, file_name=file_name, full_file_path="/tests/" + file_name, file_content=file_content)
+            self.parser.generate_file_result_from_analysis(self.analysis, file_name=file_name, full_file_path="\\tests\\" + file_name, file_content=file_content)
 
         results: Dict[str, FileResult] = self.parser.results
         self.assertTrue(results)

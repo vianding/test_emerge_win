@@ -80,7 +80,7 @@ class TFIDFTestCase(unittest.TestCase):
         self.analysis = Analysis()
         self.analyzer = Analyzer(None, self.parsers)
         self.analysis.analysis_name = "test"
-        self.analysis.source_directory = "/source"
+        self.analysis.source_directory = r"\source"
 
         self.tfidf_metric = TFIDFMetric(self.analysis)
 
@@ -94,7 +94,7 @@ class TFIDFTestCase(unittest.TestCase):
         for parser_name, test_data_dict in self.test_data.items():
             for file_name, file_content in test_data_dict.items():
                 self.parsers[parser_name].generate_file_result_from_analysis(
-                    self.analysis, file_name=file_name, full_file_path="/source/tests/" + file_name, file_content=file_content)
+                    self.analysis, file_name=file_name, full_file_path="\\source\\tests\\" + file_name, file_content=file_content)
 
                 self.assertTrue(bool(self.parsers[parser_name].results))
                 results.update(self.parsers[parser_name].results)
@@ -126,7 +126,7 @@ class TFIDFTestCase(unittest.TestCase):
 
         for parser_name, test_data_dict in self.test_data.items():
             for file_name, file_content in test_data_dict.items():
-                self.parsers[parser_name].generate_file_result_from_analysis(self.analysis, file_name=file_name, full_file_path="/tests/" + file_name, file_content=file_content)
+                self.parsers[parser_name].generate_file_result_from_analysis(self.analysis, file_name=file_name, full_file_path="\\tests\\" + file_name, file_content=file_content)
 
                 self.assertTrue(bool(self.parsers[parser_name].results))
                 results.update(self.parsers[parser_name].results)

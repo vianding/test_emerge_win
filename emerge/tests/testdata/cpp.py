@@ -7,12 +7,12 @@ CPP_TEST_FILES = {"mouseInput.cpp": """
 #include "precomp.h"
 #include <windows.h>
 #include "terminalInput.hpp"
-#include "../types/inc/utils.hpp"
+#include "..\\types\\inc\\utils.hpp"
 
 using namespace Microsoft::Console::VirtualTerminal;
 
 #ifdef BUILD_ONECORE_INTERACTIVITY
-#include "../../interactivity/inc/VtApiRedirection.hpp"
+#include "..\\..\\interactivity\\inc\\VtApiRedirection.hpp"
 #endif
 static constexpr int s_MaxDefaultCoordinate = 94;
 

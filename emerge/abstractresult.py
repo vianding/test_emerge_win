@@ -6,7 +6,7 @@ All abstract result classes.
 # License: MIT
 
 from abc import ABC, abstractmethod
-from pathlib import PosixPath
+from pathlib import WindowsPath
 from typing import Any, List, Dict
 
 
@@ -52,7 +52,7 @@ class AbstractFileResult(AbstractResult):
 
     @property
     @abstractmethod
-    def absolute_dir_path(self) -> PosixPath:
+    def absolute_dir_path(self) -> WindowsPath:
         ...
 
     @property

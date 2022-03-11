@@ -11,7 +11,7 @@ import logging
 from abc import ABC, abstractmethod
 from enum import Enum, unique, auto
 from typing import Dict, List, Generator, Optional, Tuple
-from pathlib import PosixPath
+from pathlib import WindowsPath
 import coloredlogs
 
 from emerge.abstractresult import AbstractResult, AbstractEntityResult
@@ -64,7 +64,7 @@ class CoreParsingKeyword(Enum):
     SEMICOLON = ";"
     DOT = "."
     COMMA = ","
-    SLASH = "/"
+    SLASH = "\\"
     SINGLE_QUOTE = "'"
     DOUBLE_QUOTE = '"'
     UNDERSCORE = "_"
@@ -77,8 +77,8 @@ class CoreParsingKeyword(Enum):
     DASH = "-"
     OPENING_ROUND_BRACKET = "("
     CLOSING_ROUND_BRACKET = ")"
-    POSIX_CURRENT_DIRECTORY = "./"
-    POSIX_PARENT_DIRECTORY = "../"
+    WINDOWS_CURRENT_DIRECTORY = ".\\"
+    WINDOWS_PARENT_DIRECTORY = "..\\"
 
 
 class ParsingMixin(ABC):
@@ -92,8 +92,8 @@ class ParsingMixin(ABC):
 
         resolved_dependency = relative_analysis_dependency_path
         try:
-            unresolved_path = f'{result_absolute_dir_path}/{relative_analysis_dependency_path}'
-            resolved_path = f'{PosixPath(unresolved_path).resolve()}'
+            unresolved_path = f'{result_absolute_dir_path}\\{relative_analysis_dependency_path}'
+            resolved_path = f'{WindowsPath(unresolved_path).resolve()}'
 
             project_scanning_path = analysis_source_directory
             if project_scanning_path[-1] != CoreParsingKeyword.SLASH.value:  # add trailing '/' to project scanning path if necessary
@@ -103,7 +103,7 @@ class ParsingMixin(ABC):
             # which is only relative to the project_scanning_path
             if project_scanning_path in resolved_path:
                 resolved_relative_analysis_dependency_path = str(resolved_path).replace(
-                    f"{PosixPath(analysis_source_directory).parent}{CoreParsingKeyword.SLASH.value}", "")
+                    f"{WindowsPath(analysis_source_directory).parent}{CoreParsingKeyword.SLASH.value}", "")
 
                 resolved_dependency = resolved_relative_analysis_dependency_path
 
@@ -114,7 +114,7 @@ class ParsingMixin(ABC):
 
     @staticmethod
     def create_relative_analysis_path_for_dependency(dependency: str, relative_analysis_path: str) -> str:
-        return f"{relative_analysis_path}/{dependency}"
+        return f"{relative_analysis_path}\\{dependency}"
 
     @staticmethod
     def any_mapping_key_in_string(string: str, mapping: Dict [str, str]) -> Optional[Tuple]:
@@ -133,7 +133,7 @@ class ParsingMixin(ABC):
 
     @staticmethod
     def create_relative_analysis_file_path(analysis_source_directory: str, full_file_path: str) -> str:
-        parent_analysis_source_path = f"{PosixPath(analysis_source_directory).parent}/"
+        parent_analysis_source_path = f"{WindowsPath(analysis_source_directory).parent}\\"
         relative_file_path_to_analysis = full_file_path.replace(parent_analysis_source_path, "")
         return relative_file_path_to_analysis
 
